@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algo Lab — Visualizador de Algoritmos</title>
+    <meta name="description" content="Veja A*, Dijkstra, BFS, DFS, Quick Sort, Merge Sort e outros algoritmos funcionando em tempo real." />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 25V7h6v6h6v6h6v6z" fill="currentColor"/><circle cx="25" cy="25" r="3" fill="var(--end)"/></svg>
+        <span>Algo<b>Lab</b></span>
+      </div>
+      <nav class="tabs" role="tablist">
+        <button role="tab" data-tab="path" class="active" aria-selected="true">Pathfinding</button>
+        <button role="tab" data-tab="sort" aria-selected="false">Ordenação</button>
+      </nav>
+      <a class="gh" href="https://github.com/thiagoalves0707/algo-lab" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span>Código</span>
+      </a>
+    </header>
+
+    <main>
+      <!-- ─────────────── Pathfinding ─────────────── -->
+      <section id="panel-path" class="panel active" role="tabpanel">
+        <div class="toolbar">
+          <label class="field">
+            <span>Algoritmo</span>
+            <select id="pf-algo"></select>
+          </label>
+          <div class="field">
+            <span>Pincel</span>
+            <div class="seg" id="pf-brush">
+              <button data-brush="wall" class="on">▪ Parede</button>
+              <button data-brush="weight">◆ Lama ×5</button>
+            </div>
+          </div>
+          <div class="field">
+            <span>Cenário</span>
+            <div class="btn-row">
+              <button id="pf-maze">Labirinto</button>
+              <button id="pf-random">Aleatório</button>
+              <button id="pf-clear-path">Limpar busca</button>
+              <button id="pf-clear">Limpar tudo</button>
+            </div>
+          </div>
+          <label class="field speed">
+            <span>Velocidade</span>
+            <input type="range" id="pf-speed" min="1" max="10" value="7" />
+          </label>
+          <button id="pf-run" class="primary">▶ Visualizar</button>
+        </div>
+
+        <div class="workspace">
+          <div class="stage"><canvas id="pf-canvas" aria-label="Grade de busca de caminho"></canvas></div>
+          <aside class="info">
+            <p id="pf-status" class="status">Desenhe paredes e aperte Visualizar</p>
+            <p id="pf-desc" class="desc"></p>
+            <div id="pf-badges" class="badges"></div>
+            <dl class="stats">
+              <div><dt>Nós explorados</dt><dd id="pf-visited">0</dd></div>
+              <div><dt>Passos no caminho</dt><dd id="pf-length">—</dd></div>
+              <div><dt>Custo total</dt><dd id="pf-cost">—</dd></div>
+              <div><dt>Tempo de CPU</dt><dd id="pf-cpu">—</dd></div>
+            </dl>
+            <ul class="legend">
+              <li><i class="lg-start"></i>Início (arraste)</li>
+              <li><i class="lg-end"></i>Destino (arraste)</li>
+              <li><i class="lg-wall"></i>Parede</li>
+              <li><i class="lg-mud"></i>Lama (custo 5)</li>
+              <li><i class="lg-frontier"></i>Fronteira</li>
+              <li><i class="lg-visited"></i>Explorado</li>
+              <li><i class="lg-path"></i>Caminho</li>
+            </ul>
+            <p class="tip">💡 Depois que a busca terminar, arraste o início ou o destino: o caminho é recalculado ao vivo.</p>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ─────────────── Ordenação ─────────────── -->
+      <section id="panel-sort" class="panel" role="tabpanel">
+        <div class="toolbar">
+          <label class="field">
+            <span>Algoritmo</span>
+            <select id="so-algo"></select>
+          </label>
+          <label class="field">
+            <span>Entrada</span>
+            <select id="so-preset">
+              <option value="random">Aleatória</option>
+              <option value="nearly">Quase ordenada</option>
+              <option value="reversed">Invertida</option>
+              <option value="few">Poucos valores únicos</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Tamanho: <b id="so-size-label">64</b></span>
+            <input type="range" id="so-size" min="8" max="200" value="64" />
+          </label>
+          <label class="field speed">
+            <span>Velocidade</span>
+            <input type="range" id="so-speed" min="1" max="10" value="7" />
+          </label>
+          <div class="btn-row">
+            <button id="so-sound">🔇 Som</button>
+            <button id="so-shuffle">Embaralhar</button>
+            <button id="so-run" class="primary">▶ Ordenar</button>
+          </div>
+        </div>
+
+        <div class="workspace">
+          <div class="stage"><canvas id="so-canvas" aria-label="Barras sendo ordenadas"></canvas></div>
+          <aside class="info">
+            <p id="so-status" class="status">Pronto pra ordenar</p>
+            <p id="so-desc" class="desc"></p>
+            <div id="so-complexity" class="complexity"></div>
+            <dl class="stats">
+              <div><dt>Comparações</dt><dd id="so-comparisons">0</dd></div>
+              <div><dt>Escritas</dt><dd id="so-writes">0</dd></div>
+            </dl>
+            <ul class="legend">
+              <li><i class="lg-compare"></i>Comparando</li>
+              <li><i class="lg-write"></i>Escrevendo</li>
+              <li><i class="lg-sorted"></i>Ordenado</li>
+            </ul>
+            <p class="tip">💡 Ligue o som e rode o Merge Sort com 200 barras. Confia.</p>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
